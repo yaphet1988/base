@@ -312,11 +312,11 @@ int WebSockLink::handle_frame_data(const char* data, size_t len)
 	int _handle_len = 0;
 	while ( len >= FRAME_HEADER_MIN_LEN )
 	{
+		Unpack _up(data+_handle_len, len);
 		size_t _total_frame_len = FRAME_HEADER_MIN_LEN;
-		Unpack _up(data, len);
 		uint16_t _frame_header = _up.pop_uint16();
 		uint8_t _MASK = (_frame_header & 0x0080) >> 7;
-		uint8_t _payload_len = (_frame_header & 0x007F);
+		uint64_t _payload_len = (_frame_header & 0x000000000000007F); //payload now is 7 bits, but maybe 16bits(==126) or 64bits(==127), so here make it be uint64_t
 		if (!!_MASK)
 			_total_frame_len += MASKING_KEY_LEN;
 		if ( _payload_len <= 125 )
@@ -361,8 +361,8 @@ int WebSockLink::handle_frame_data(const char* data, size_t len)
 		case OPCODE_CLOSE:
 			{
 				FUNLOG(Info, " webcosket reset by peer(CLOSE frame was receivered %p)", this);
-				m_pHandler->on_close(this);
-				break;
+				//m_pHandler->on_close(this);
+				//return -1; //on_close will destroy this link object, so return
 			}
 		case OPCODE_TEXT:
 		case OPCODE_BINARY:
