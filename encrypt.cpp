@@ -198,7 +198,7 @@ std::string sha1(const char* data, size_t len)
 {
 	unsigned char dest[SHA_DIGEST_LENGTH];
 	::SHA1((const unsigned char*)data, len, dest);
-	return std::string((const char*)dest);
+	return std::string((const char*)dest, SHA_DIGEST_LENGTH);
 }
 }
 
