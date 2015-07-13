@@ -17,6 +17,14 @@ TcpLink::TcpLink()
 	_fd = ::socket(AF_INET, SOCK_STREAM, 0);
 }
 
+TcpLink::TcpLink(int fd)
+: m_bListen(false)
+, m_bConnected(false)
+{
+	_fd_type = SOCK_TYPE_TCP;
+	_fd = fd;
+}
+
 TcpLink::~TcpLink()
 {
 	Env::selector()->reg_event(this, IO_OPT_CLR);
@@ -211,8 +219,8 @@ TcpLink* TcpLink::accept()
 		return NULL;
 	}
 
-	TcpLink *pNew = new TcpLink();
-	pNew->_fd = ret;
+	TcpLink *pNew = new TcpLink(ret);
+	//pNew->_fd = ret;
 	pNew->m_ip = sa.sin_addr.s_addr;
 	pNew->m_port = ntohs(sa.sin_port);
 	pNew->m_bConnected = true;

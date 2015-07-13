@@ -1,7 +1,7 @@
 #pragma once
 
-
 #define SAFE_DELETE(p)  { if (p) {delete p; p = NULL;} }
+#define SAFE_DELETE_W(p){ if (p) {delete[] p; p = NULL;} }
 #define CHECK_NULL(p)   { if(!p) return; }
 
 //------------- Form Func Map ------------------------
@@ -70,6 +70,25 @@
 		} \
 
 #define END_FORM_FUNC_MAP }
+
+//-----------   high prority form --------------------
+#define ON_HIGH_PROPRITY_RESPONE_FUNC(pkgType, FUNC, unPack, pLink) \
+		if ( pkgType::uri == unPack.uri() ) \
+		{ \
+			pkgType pkg; \
+			pkg.unmarshal(unPack); \
+			FUNC(pkg, pLink); \
+			return; \
+		} \
+
+#define ON_HIGH_PRORITY_INCOMP_MARSHAL_FUNC(pkgType, FUNC, unPack, pLink, data, len) \
+		if ( pkgType::uri == unPack.uri() ) \
+		{ \
+			pkgType pkg; \
+			pkg.unmarshal_incomplete(unPack); \
+			FUNC(pkg, pLink, data, len); \
+			return; \
+		} \
 
 //------------  console form --------------------------
 #define ON_CONSOLE_RESPONE_FUNC(cmdType, FUNC, cmd, params, pLink) \

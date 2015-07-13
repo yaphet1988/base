@@ -7,6 +7,9 @@ class TcpLink
 {
 public:
 	TcpLink();
+private:
+	TcpLink(int fd); //for accept calls
+public:
 	~TcpLink();
 
 	virtual void on_socket_read();
