@@ -1,6 +1,7 @@
 #pragma once
 #include "comm.h"
 #include "packbuf.h"
+#include <map>
 #include <stdint.h>
 #include <sstream>
 #define HEADER_SIZE 10
@@ -245,6 +246,13 @@ inline Pack& operator << (Pack& p, const std::pair<T1, T2>& t)
 	return p;
 }
 
+template <typename K, typename V>
+inline Pack& operator << (Pack& p, const std::map<K,V>& item)
+{
+	marshal_container16(p, item);
+	return p;
+}
+
 template <typename T1, typename T2>
 inline const Unpack& operator >> (const Unpack& up, std::pair<const T1, T2>& t)
 {
@@ -258,6 +266,13 @@ template <typename T1, typename T2>
 inline const Unpack& operator >> (const Unpack& up, std::pair<T1, T2>& t)
 {
 	up >> t.first >> t.second;
+	return up;
+}
+
+template <typename K, typename V>
+inline const Unpack& operator >> (const Unpack& up, std::map<K,V>& item)
+{
+	unmarshal_container16(up, std::inserter(item, item.begin()));
 	return up;
 }
 
@@ -300,3 +315,4 @@ inline void unmarshal_container32(const Unpack& up, OutputIterator io)
 		++io;
 	}
 }
+
