@@ -30,7 +30,10 @@ class WebSockLink
 public:
 	WebSockLink();
 	~WebSockLink();
+private:
+	WebSockLink(int fd); //for function accept calls only, to avoid fd leak!
 
+public:
 	//fdbase
 	virtual void on_socket_read();
 	virtual void on_socket_write();

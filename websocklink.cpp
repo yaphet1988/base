@@ -62,6 +62,15 @@ WebSockLink::~WebSockLink()
 	this->close();
 }
 
+WebSockLink::WebSockLink(int fd)
+: m_bListen(false)
+, m_bConnected(false)
+, m_bHandshakeDone(false)
+{
+	_fd_type = SOCK_TYPE_WEBSOCK;
+	_fd = fd;
+}
+
 void WebSockLink::on_socket_read()
 {
 	if (!m_pHandler)
@@ -228,10 +237,10 @@ WebSockLink* WebSockLink::accept()
 {
 	struct sockaddr_in sa;
 	socklen_t len = sizeof(sa);
-	int ret = ::accept(_fd, (struct sockaddr*)&sa, &len);
+	int _new_fd = ::accept(_fd, (struct sockaddr*)&sa, &len);
 	
-	WebSockLink *pNew = new WebSockLink();
-	pNew->_fd = ret;
+	WebSockLink *pNew = new WebSockLink(_new_fd);
+	//pNew->_fd = ret;
 	pNew->m_ip = sa.sin_addr.s_addr;
 	pNew->m_port = ntohs(sa.sin_port);
 	pNew->m_bConnected = true;
